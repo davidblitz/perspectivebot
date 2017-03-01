@@ -15,13 +15,31 @@ messages = ["I'm afraid it's just you.", "I'm perspectiveBot and it's just you. 
 class MyStreamListener(tweepy.StreamListener):
 
     def on_status(self, status):
-        user_handle = "@{}".format(status.user.screen_name)
-        tweet_id = status.id
-        message = "{handle} {msg}".format(handle = user_handle, msg = messages[randint(0, 2)])
-        api.update_status(message, tweet_id)
-        time.sleep(300)
+        print(status.text)
+        if "is it just me" in status.text or "Is it just me" in status.text:
+            if "RT @" in status.text:
+                print(status.text)
+                print("\n unfortunately a retweet :(")
+            else:
+                print(status.text)
+                print("\n")
+                user_handle = "@{}".format(status.user.screen_name)
+                print(user_handle)
+                print("\n")
+                tweet_id = status.id
+                print(tweet_id)
+                print("\n")
+                original_tweet = "twitter.com/{screen_name}/status/{tweet_id}".format(
+                    screen_name = status.user.screen_name, tweet_id = tweet_id)
+                message = "{msg} {original_tweet}".format(msg = messages[randint(0, 2)], original_tweet=original_tweet)
+                print(message)
+                api.update_status(message, in_reply_to_status_id = tweet_id)
+                time.sleep(300)
+        else:
+
+            print(status.text)
+            print("\n Not relevant \n")
 
 myStreamListener = MyStreamListener()
 myStream = tweepy.Stream(auth = api.auth, listener=myStreamListener)
 myStream.filter(track=['is it just me'])
-
